@@ -8,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.authors       = ["Jeremiah Rodden"]
   spec.email         = ["jrodden1+dev@gmail.com"]
 
-  spec.summary       = %q{TODO: Write a short summary, because RubyGems requires one.}
-  spec.description   = %q{TODO: Write a longer description or delete this line.}
+  spec.summary       = %q{WeatherPup is a CLI application built with Ruby that will fetch current weather condtions based on a US Zip Code or a GPS Coordinate pair.}
+  spec.description   = %q{WeatherPup is a CLI application built with Ruby that will fetch current weather condtions based on a US Zip Code or a GPS Coordinate pair.  This utilizes data from AggData.org and OpenWeatherMap.org}
   spec.homepage      = "https://github.com/jrodden1/weatherpup"
   spec.license       = "MIT"
 
@@ -17,7 +17,7 @@ Gem::Specification.new do |spec|
 
   spec.metadata["homepage_uri"] = spec.homepage
   spec.metadata["source_code_uri"] = "https://github.com/jrodden1/weatherpup"
-  spec.metadata["changelog_uri"] = "TODO: Put your gem's CHANGELOG.md URL here."
+  spec.metadata["changelog_uri"] = "https://github.com/jrodden1/weatherpup/blob/master/CHANGELOG.md"
 
   # Specify which files should be added to the gem when it is released.
   # The `git ls-files -z` loads the files in the RubyGem that have been added into git.

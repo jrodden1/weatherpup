@@ -1,5 +1,5 @@
 source "https://rubygems.org"
-'httparty'
-'yaml'
+gem 'httparty'
+gem 'pry'
 # Specify your gem's dependencies in weatherpup.gemspec
 gemspec
