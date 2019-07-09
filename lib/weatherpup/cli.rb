@@ -79,7 +79,6 @@ class WeatherPup::CLI
             zip_current_conditions.zip_code = zip_code
             api_raw_data = zip_current_conditions.zip_api_fetch(zip_code)
             api_processed_data_hash = zip_current_conditions.zip_process_api_data_to_attribs_hash(api_raw_data)
-            binding.pry
             
             #This next line takes the zip_current_conditions variable which is a CurrentConditions Object Instance, taps into it and writes all of the attributes that I collected, then it prints the information located in the object itself.
             zip_current_conditions.tap {|current_conditions_obj| current_conditions_obj.write_attributes(api_processed_data_hash)}.print_zip_current_conditions
