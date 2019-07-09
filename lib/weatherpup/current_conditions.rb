@@ -72,58 +72,49 @@ class WeatherPup::CurrentConditions
       }
    end
 
-   def self.new_by_gps
-      latitude = nil
-      longitude = nil
-      valid_coordinates = nil
-      system "clear"
-      puts "Ok, Current Weather Conditions by GPS coordinates!"
-      until latitude == 'back' || longitude == 'back' || valid_coordinates
-         puts "\n\nPlease enter in the " + "latitude".colorize(:light_yellow).underline + " in decimal notation:"
-         latitude = gets.chomp
+   #def self.new_by_gps
+      #latitude = nil
+      #longitude = nil
+      #valid_coordinates = nil
+      #system "clear"
+      #puts "Ok, Current Weather Conditions by GPS coordinates!"
+      #until latitude == 'back' || longitude == 'back' || valid_coordinates
+         #puts "\n\nPlease enter in the " + "latitude".colorize(:light_yellow).underline + " in decimal notation:"
+         #latitude = gets.chomp
+#
+         #puts "\nPlease enter in the " + "longitude".colorize(:light_blue).underline + " in decimal notation:"
+         #longitude = gets.chomp
+#
+         #valid_coordinates = self.valid_coordinate_pair?(latitude, longitude)
+#
+         #if valid_coordinates
+            #system "clear" 
+            #gps_current_conditions = self.new
+            #api_raw_data = gps_current_conditions.gps_api_fetch(latitude, longitude)
+            #api_processed_data_hash = gps_current_conditions.gps_process_api_data_to_attribs_hash(api_raw_data)
+            #This next line takes the gps_current_conditions variable which is a CurrentConditions Object Instance, taps into it and writes all of the #attributes that I collected, then it prints the information located in the object itself.
+            #gps_current_conditions.tap {|current_conditions_obj| current_conditions_obj.write_attributes(api_processed_data_hash)}.print_gps_current_conditions
+#            
+            #continue = ""
+            #until continue.downcase == "back"
+               #puts "\nType 'back' to return to the main menu."
+               #continue = gets.chomp
+            #end
+            #system "clear"
+            #break
+         #elsif latitude.downcase == "back" || longitude.downcase == "back"
+            #system "clear"
+            #break
+         #else
+            #puts <<~INVALID_GPS
+               #\nInvalid Coordinates detected!
+               #(Type 'back' to return to the main menu).
+            #INVALID_GPS
+         #end
+      #end
+   #end
 
-         puts "\nPlease enter in the " + "longitude".colorize(:light_blue).underline + " in decimal notation:"
-         longitude = gets.chomp
-
-         valid_coordinates = self.valid_coordinate_pair?(latitude, longitude)
-
-         if valid_coordinates
-            system "clear" 
-            gps_current_conditions = self.new
-            api_raw_data = gps_current_conditions.gps_api_fetch(latitude, longitude)
-            api_processed_data_hash = gps_current_conditions.gps_process_api_data_to_attribs_hash(api_raw_data)
-            #This next line takes the gps_current_conditions variable which is a CurrentConditions Object Instance, taps into it and writes all of the attributes that I collected, then it prints the information located in the object itself.
-            gps_current_conditions.tap {|current_conditions_obj| current_conditions_obj.write_attributes(api_processed_data_hash)}.print_gps_current_conditions
-            
-            continue = ""
-            until continue.downcase == "back"
-               puts "\nType 'back' to return to the main menu."
-               continue = gets.chomp
-            end
-            system "clear"
-            break
-         elsif latitude.downcase == "back" || longitude.downcase == "back"
-            system "clear"
-            break
-         else
-            puts <<~INVALID_GPS
-               \nInvalid Coordinates detected!
-               (Type 'back' to return to the main menu).
-            INVALID_GPS
-         end
-      end
-   end
-
-   def self.valid_coordinate_pair?(latitude, longitude)
-      #If the lat & long user input contains alphabet characters, its not valid
-      if latitude.match(/[a-zA-Z]/) || longitude.match(/[a-zA-Z]/) 
-         false
-      else
-         #Checks to see if both the lat & long user input are within valid ranges
-         VALID_LAT_RANGE.member?(latitude.to_f) && VALID_LONG_RANGE.member?(longitude.to_f)
-      end
-      #returns true if the lat and long coordinate pair is valid.
-   end
+   
 
    def gps_api_fetch(latitude, longitude)
       
