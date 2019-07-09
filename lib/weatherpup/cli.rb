@@ -2,12 +2,28 @@
 class WeatherPup::CLI
    def call
       system "clear"
-      puts "Welcome to WeatherPup!"
+      #puts "Welcome to WeatherPup!"  #simple intro
+      puts <<~WELCOME
+      ▒█░░▒█ █▀▀ █░░ █▀▀ █▀▀█ █▀▄▀█ █▀▀ 　 ▀▀█▀▀ █▀▀█ 
+      ▒█▒█▒█ █▀▀ █░░ █░░ █░░█ █░▀░█ █▀▀ 　 ░▒█░░ █░░█ 
+      ▒█▄▀▄█ ▀▀▀ ▀▀▀ ▀▀▀ ▀▀▀▀ ▀░░░▀ ▀▀▀ 　 ░▒█░░ ▀▀▀▀ 
+      
+      ▒█░░▒█ █▀▀ █▀▀█ ▀▀█▀▀ █░░█ █▀▀ █▀▀█ ▒█▀▀█ █░░█ █▀▀█ █      
+      ▒█▒█▒█ █▀▀ █▄▄█ ░░█░░ █▀▀█ █▀▀ █▄▄▀ ▒█▄▄█ █░░█ █░░█ ▀      
+      ▒█▄▀▄█ ▀▀▀ ▀░░▀ ░░▀░░ ▀░░▀ ▀▀▀ ▀░▀▀ ▒█░░░ ░▀▀▀ █▀▀▀ ▄  
+      
+                     ░░░░░░░░░░░░░░░░▄██
+                     ░░░░▄████▄▄▄▄▄▄███████
+                     ░░▄█▀████████████▀
+                     ░▄▀░██▀██▀▀▀▀▀██▀▀▄
+                     ░░░░█▄░▀█▄░░░░▀█▄▀▀
+
+      WELCOME
       main_menu
    end
 
    def main_menu
-      input = nil
+      input = "no input"
       until input == 'exit'
          puts <<~MAINMENU
 
@@ -28,11 +44,7 @@ class WeatherPup::CLI
          when "2"
             WeatherPup::CurrentConditions.new_by_gps
          else
-            puts <<~INVALID
-               Sorry, #{input} isn’t a valid input.
-
-               Please type 1, 2, or 'exit'.
-            INVALID
+            puts "\nSorry, that isn’t a valid input."
          end
       end
       system "clear"
@@ -41,7 +53,20 @@ class WeatherPup::CLI
 
    def goodbye
       system "clear"
-      puts "Thank you for using WeatherPup!"
+      puts <<~GOODBYE
+      ▀▀█▀▀ █░░█ █▀▀█ █▀▀▄ █░█ █▀▀ 　 █▀▀ █▀▀█ █▀▀█ 　 █▀▀█ █░░ █▀▀█ █░░█ ░▀░ █▀▀▄ █▀▀▀ 
+      ░▒█░░ █▀▀█ █▄▄█ █░░█ █▀▄ ▀▀█ 　 █▀▀ █░░█ █▄▄▀ 　 █░░█ █░░ █▄▄█ █▄▄█ ▀█▀ █░░█ █░▀█ 
+      ░▒█░░ ▀░░▀ ▀░░▀ ▀░░▀ ▀░▀ ▀▀▀ 　 ▀░░ ▀▀▀▀ ▀░▀▀ 　 █▀▀▀ ▀▀▀ ▀░░▀ ▄▄▄█ ▀▀▀ ▀░░▀ ▀▀▀▀ 
+      
+       　 　 　 　█▀▀ █▀▀ ▀▀█▀▀ █▀▀ █░░█ 　 █░░░█ ░▀░ ▀▀█▀▀ █░░█ 　 █▀▄▀█ █▀▀ █           
+       　 　 　 　█▀▀ █▀▀ ░░█░░ █░░ █▀▀█ 　 █▄█▄█ ▀█▀ ░░█░░ █▀▀█ 　 █░▀░█ █▀▀ ▀ 
+       　 　 　 　▀░░ ▀▀▀ ░░▀░░ ▀▀▀ ▀░░▀ 　 ░▀░▀░ ▀▀▀ ░░▀░░ ▀░░▀ 　 ▀░░░▀ ▀▀▀ ▄ 
+      
+                             Thank you for using WeatherPup!
+                        Cool Welcome and Goodbye Text by fsymbols.com   
+                               Created by Jeremiah Rodden
+                              
+      GOODBYE
    end
 
 end
