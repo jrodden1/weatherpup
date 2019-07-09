@@ -4,6 +4,7 @@ require_relative "./weatherpup/cli"
 require_relative "./weatherpup/current_conditions"
 
 require 'httparty'
+require 'colorize'
 require 'yaml'
 require 'pry'
 
@@ -20,3 +21,7 @@ SOUTH_RANGE = 158..202
 SOUTHWEST_RANGE = 203..247
 WEST_RANGE = 248..292
 NORTHWEST_RANGE = 293..337
+
+#These are the ranges that will allow me to validate if a lat or long value is valid
+VALID_LAT_RANGE = -90.0..90.0
+VALID_LONG_RANGE = -180.0..180.0
