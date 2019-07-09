@@ -13,11 +13,11 @@ Gem::Specification.new do |spec|
   spec.homepage      = "https://github.com/jrodden1/weatherpup"
   spec.license       = "MIT"
 
-  spec.metadata["allowed_push_host"] = "TODO: Set to 'http://mygemserver.com'"
+  #spec.metadata["allowed_push_host"] = "TODO: Set to 'http://mygemserver.com'"
 
-  spec.metadata["homepage_uri"] = spec.homepage
-  spec.metadata["source_code_uri"] = "https://github.com/jrodden1/weatherpup"
-  spec.metadata["changelog_uri"] = "https://github.com/jrodden1/weatherpup/blob/master/CHANGELOG.md"
+  #spec.metadata["homepage_uri"] = spec.homepage
+  #spec.metadata["source_code_uri"] = "https://github.com/jrodden1/weatherpup"
+  #spec.metadata["changelog_uri"] = "https://github.com/jrodden1/weatherpup/blob/master/CHANGELOG.md"
 
   # Specify which files should be added to the gem when it is released.
   # The `git ls-files -z` loads the files in the RubyGem that have been added into git.
@@ -31,4 +31,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "bundler", "~> 2.0"
   spec.add_development_dependency "rake", "~> 10.0"
   spec.add_development_dependency "rspec", "~> 3.0"
+  spec.add_development_dependency "pry"
+  spec.add_runtime_dependency "httparty"
+  spec.add_runtime_dependency "colorize"
 end
