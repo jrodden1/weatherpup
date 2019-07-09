@@ -37,11 +37,10 @@ class WeatherPup::CLI
          input = gets.chomp
 
          case input
-         
          when "1"
-            fetch_by_zip
+            self.fetch_by_zip
          when "2"
-            fetch_by_gps
+            self.fetch_by_gps
          else
             puts "\nSorry, that isn’t a valid input."
          end
@@ -50,15 +49,64 @@ class WeatherPup::CLI
       self.goodbye
    end
 
+   #fetch the current conditions via zip code input from the user
    def fetch_by_zip
+      zip_code = nil
+      zip_code_valid = nil
       
-      
-      
-      WeatherPup::CurrentConditions.new_by_zip
+      #Clear my screen first to make things look nicer 
+      system "clear"
 
+      #Ask user for the zip code
+      puts "Ok, Current Weather Conditions by Zip Code!"
+      until zip_code_valid
+         puts "\nPlease enter in the 5 Digit Zip Code:"
+         zip_code = gets.chomp
 
+         #Checking to see if the user wants out of this loop and back to the main menu
+         if zip_code.downcase == "back"
+            system "clear"
+            break
+         end
+
+         #Otherwise, check to see if what the user put in was valid
+         zip_code_valid = zip_code_valid?(zip_code)
+
+         #If the zipcode input is valid, clear the screen, instantiate a new instance of CurrentConditions class, go fetch the raw api data, process it into an attributes hash to mass assign, mass assign the attributes of the CurrentCondtions intance using #write_attributes, then print the current conditions to screen gps
+         if zip_code_valid
+            system "clear" 
+            zip_current_conditions = WeatherPup::CurrentConditions.new
+            zip_current_conditions.zip_code = zip_code
+            api_raw_data = zip_current_conditions.zip_api_fetch(zip_code)
+            api_processed_data_hash = zip_current_conditions.zip_process_api_data_to_attribs_hash(api_raw_data)
+            binding.pry
+            
+            #This next line takes the zip_current_conditions variable which is a CurrentConditions Object Instance, taps into it and writes all of the attributes that I collected, then it prints the information located in the object itself.
+            zip_current_conditions.tap {|current_conditions_obj| current_conditions_obj.write_attributes(api_processed_data_hash)}.print_zip_current_conditions
+            
+            #Next I wait for the user to type in "back" to return to the main menu
+            return_to_main = ""
+            until return_to_main.downcase == "back"
+               puts "\nType 'back' to return to the main menu."
+               return_to_main = gets.chomp
+            end
+            system "clear"
+            break
+         else
+            puts <<~INVALID_ZIP
+               \nInvalid Zip code detected!
+               (Type 'back' to return to the main menu).
+            INVALID_ZIP
+         end
+      end    
+   end
+      
+   def zip_code_valid?(zip_to_check)
+      #checks the VALID_US_ZIP_CODES constant to see if the zip code is real
+      VALID_US_ZIP_CODES.include?(zip_to_check)
    end
 
+   #fetch the current conditions via zip code input from the user
    def fetch_by_gps
       latitude = nil
       longitude = nil
@@ -98,10 +146,10 @@ class WeatherPup::CLI
             #This next line takes the gps_current_conditions variable which is a CurrentConditions Object Instance, taps into it and writes all of the attributes that I collected, then it prints the information located in the object itself.
             gps_current_conditions.tap {|current_conditions_obj| current_conditions_obj.write_attributes(api_processed_data_hash)}.print_gps_current_conditions
             
-            continue = ""
-            until continue.downcase == "back"
+            return_to_main = ""
+            until return_to_main.downcase == "back"
                puts "\nType 'back' to return to the main menu."
-               continue = gets.chomp
+               return_to_main = gets.chomp
             end
             system "clear"
             break
@@ -114,8 +162,9 @@ class WeatherPup::CLI
       end
    end
 
+   #Do some basic checks to make sure that the coordinates are legit
    def valid_coordinate_pair?(latitude, longitude)
-      #If the lat & long user input contains alphabet characters, its not valid
+      #If the lat & long user input contains alphabet characters, it's not valid
       if latitude.match(/[a-zA-Z]/) || longitude.match(/[a-zA-Z]/) 
          false
       else
@@ -125,6 +174,7 @@ class WeatherPup::CLI
       #returns true if the lat and long coordinate pair is valid.
    end
 
+   #Says thank you and goodbye to user. 
    def goodbye
       system "clear"
       puts <<~GOODBYE

@@ -3,118 +3,35 @@ class WeatherPup::CurrentConditions
                  :temperature, :pressure, :humidity, :current_weather_description, :pressure, 
                  :wind_speed, :wind_direction_indicator, :wind_direction_indicator_string, :reading_date_and_time, :city_name
    #With this class I should be able to create a CurrentConditions instance by Zip code or GPS coordinates
-   
-
-   def self.new_by_zip
-      zip_code = nil
-      zip_code_valid = nil
-      system "clear"
-      puts "Ok, Current Weather Conditions by Zip Code!"
-      until zip_code == 'back' || zip_code_valid
-         puts "\nPlease enter in the 5 Digit Zip Code:"
-         zip_code = gets.chomp
-
-         zip_code_valid = self.zip_code_valid?(zip_code)
-
-         if zip_code_valid
-            system "clear" 
-            zip_current_conditions = self.new
-            api_hash = zip_current_conditions.zip_api_fetch(zip_code)
-            #I should be able to refact these next two lines into one using chaining
-            zip_current_conditions.write_attributes(api_hash)
-            zip_current_conditions.print_zip_current_conditions
-            continue = ""
-            until continue.downcase == "back"
-               puts "\nType 'back' to return to the main menu."
-               continue = gets.chomp
-            end
-            system "clear"
-            break
-         elsif zip_code.downcase == "back"
-            system "clear"
-            break
-         else
-            puts <<~INVALID_ZIP
-               \nInvalid Zip code detected!
-               (Type 'back' to return to the main menu).
-            INVALID_ZIP
-         end
-      end    
-   end
-
-   def self.zip_code_valid?(zip_to_check)
-      VALID_US_ZIP_CODES.include?(zip_to_check)
-   end
 
    def zip_api_fetch(zip_code, country_code = "us")
-      #this will actually hit the OpenWeatherMap Api and then call a method that sets all the current_conditions attributes
-      
+      #this will actually hit the OpenWeatherMap Api
       #I have defaulted the country code to US for now, but have built the GET request to be flexible to add multi-country postal codes later
-      api_info = HTTParty.get("https://api.openweathermap.org/data/2.5/weather?zip=#{zip_code},#{country_code}&APPID=#{APPID}&units=imperial")
-      
+      HTTParty.get("https://api.openweathermap.org/data/2.5/weather?zip=#{zip_code},#{country_code}&APPID=#{APPID}&units=imperial")
+   end
+
+   def zip_process_api_data_to_attribs_hash(api_data)
+      #May want to separate out this wind direction checker or completely wipe out the wind direction information all together for GPS feature
+      #REFACTOR: take out the line below and rename the arg to api_info
+      api_info = api_data
       wind_direction_indicator_deg = api_info["wind"]["deg"].round
       wind_direction_indicator_string = wind_direction_indicator_to_text(wind_direction_indicator_deg)
 
-      #NOTE: REFACTOR Needed / Bug -- if you do another city I need to localize the time to that location's time zone - especially for sunrise and sunset
-
+      #creates attributes_hash_for_mass_assignment to be used by the #write_attributes method
       {
          :current_weather_description => api_info["weather"][0]["main"],
+         #I'm leaving :current_condtions_means in here in case I want to combine my print_gps and print_zip methods, otherwise, it's not needed at the moment
          :current_conditions_means => "zip",
-         :zip_code => zip_code,
          :temperature => api_info["main"]["temp"].round.to_s,
          :humidity => api_info["main"]["humidity"].to_s,
          :pressure => (api_info["main"]["pressure"] * 0.0295300).to_s[0..4],
          :wind_speed => api_info["wind"]["speed"].round.to_s,
-         :wind_direction_indicator => wind_direction_indicator_deg,
+         :wind_direction_indicator => wind_direction_indicator_deg.to_s + "°",
          :wind_direction_indicator_string => wind_direction_indicator_string,
          :reading_date_and_time => Time.at(api_info["dt"]).to_datetime.strftime("%a, %b %d, %Y at %I:%M%P UTC%:::z"),
          :city_name => api_info["name"]
       }
-   end
-
-   #def self.new_by_gps
-      #latitude = nil
-      #longitude = nil
-      #valid_coordinates = nil
-      #system "clear"
-      #puts "Ok, Current Weather Conditions by GPS coordinates!"
-      #until latitude == 'back' || longitude == 'back' || valid_coordinates
-         #puts "\n\nPlease enter in the " + "latitude".colorize(:light_yellow).underline + " in decimal notation:"
-         #latitude = gets.chomp
-#
-         #puts "\nPlease enter in the " + "longitude".colorize(:light_blue).underline + " in decimal notation:"
-         #longitude = gets.chomp
-#
-         #valid_coordinates = self.valid_coordinate_pair?(latitude, longitude)
-#
-         #if valid_coordinates
-            #system "clear" 
-            #gps_current_conditions = self.new
-            #api_raw_data = gps_current_conditions.gps_api_fetch(latitude, longitude)
-            #api_processed_data_hash = gps_current_conditions.gps_process_api_data_to_attribs_hash(api_raw_data)
-            #This next line takes the gps_current_conditions variable which is a CurrentConditions Object Instance, taps into it and writes all of the #attributes that I collected, then it prints the information located in the object itself.
-            #gps_current_conditions.tap {|current_conditions_obj| current_conditions_obj.write_attributes(api_processed_data_hash)}.print_gps_current_conditions
-#            
-            #continue = ""
-            #until continue.downcase == "back"
-               #puts "\nType 'back' to return to the main menu."
-               #continue = gets.chomp
-            #end
-            #system "clear"
-            #break
-         #elsif latitude.downcase == "back" || longitude.downcase == "back"
-            #system "clear"
-            #break
-         #else
-            #puts <<~INVALID_GPS
-               #\nInvalid Coordinates detected!
-               #(Type 'back' to return to the main menu).
-            #INVALID_GPS
-         #end
-      #end
-   #end
-
-   
+   end   
 
    def gps_api_fetch(latitude, longitude)
       
@@ -135,12 +52,14 @@ class WeatherPup::CurrentConditions
       else
          wind_direction_indicator_deg_rounded = wind_direction_indicator_deg.round
          wind_direction_indicator_string = wind_direction_indicator_to_text(wind_direction_indicator_deg_rounded)
-         wind_direction_indicator_deg = wind_direction_indicator_deg_rounded.to_s + "°"
+         wind_direction_indicator_deg = wind_direction_indicator_deg.round.to_s + "°"
       end
       #NOTE: REFACTOR Needed / Bug -- if you do another city I need to localize the time to that location's time zone - especially for sunrise and sunset
 
-      attributes_hash_for_mass_assignment = {
+      #creates attributes_hash_for_mass_assignment to be used by the #write_attributes method
+      {
          :current_weather_description => api_info["weather"][0]["main"],
+         #I'm leaving :current_condtions_means in here in case I want to combine my print_gps and print_zip methods, otherwise, it's not needed at the moment
          :current_conditions_means => "gps",
          :lat => api_info["coord"]["lat"].to_s,
          :long => api_info["coord"]["lon"].to_s,
@@ -172,7 +91,7 @@ class WeatherPup::CurrentConditions
 
          Pressure: #{self.pressure.colorize(:light_blue)} in of Hg
          Wind Speed: #{self.wind_speed.colorize(:light_blue)} MPH 
-         Wind Direction: #{self.wind_direction_indicator_string.colorize(:light_blue)} (#{self.wind_direction_indicator.to_s.colorize(:blue)}°)
+         Wind Direction: #{self.wind_direction_indicator_string.colorize(:light_blue)} (#{self.wind_direction_indicator.to_s.colorize(:blue)})
 
          This data is based on the last weather station reading time of:
          #{self.reading_date_and_time.colorize(:yellow)}
