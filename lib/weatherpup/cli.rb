@@ -39,15 +39,32 @@ class WeatherPup::CLI
          case input
          
          when "1"
-            WeatherPup::CurrentConditions.new_by_zip
+            fetch_by_zip
          when "2"
-            WeatherPup::CurrentConditions.new_by_gps
+            fetch_by_gps
          else
             puts "\nSorry, that isn’t a valid input."
          end
       end
       system "clear"
       self.goodbye
+   end
+
+   def fetch_by_zip
+      
+      
+      
+      WeatherPup::CurrentConditions.new_by_zip
+
+
+   end
+
+   def fetch_by_gps
+      
+      
+      WeatherPup::CurrentConditions.new_by_gps
+
+      
    end
 
    def goodbye

@@ -90,10 +90,11 @@ class WeatherPup::CurrentConditions
          if valid_coordinates
             system "clear" 
             gps_current_conditions = self.new
-            api_hash = gps_current_conditions.gps_api_fetch(latitude, longitude)
-            #I should be able to refact these next two lines into one using chaining
-            gps_current_conditions.write_attributes(api_hash)
-            gps_current_conditions.print_gps_current_conditions
+            api_raw_data = gps_current_conditions.gps_api_fetch(latitude, longitude)
+            api_processed_data_hash = gps_current_conditions.gps_process_api_data_to_attribs_hash(api_raw_data)
+            #This next line takes the gps_current_conditions variable which is a CurrentConditions Object Instance, taps into it and writes all of the attributes that I collected, then it prints the information located in the object itself.
+            gps_current_conditions.tap {|current_conditions_obj| current_conditions_obj.write_attributes(api_processed_data_hash)}.print_gps_current_conditions
+            
             continue = ""
             until continue.downcase == "back"
                puts "\nType 'back' to return to the main menu."
@@ -129,8 +130,13 @@ class WeatherPup::CurrentConditions
       #I think I want to split this out into two methods -- #gps_api_data_fetch which will just do the fetch based on the Lat, Longs given to it.  Then have another method, #create_api_data_hash that will do the rest of this in another method.  The #create_api_data_hash method will need to be run in the #new_by_gps method and the create_api_data_hash method will call the #gps_apa_data_fetch method and save that into a variable called api_info 
 
       #this will actually hit the OpenWeatherMap Api and then return all the information 
-      api_info = HTTParty.get("https://api.openweathermap.org/data/2.5/weather?lat=#{latitude}&lon=#{longitude}&APPID=#{APPID}&units=imperial")
+      HTTParty.get("https://api.openweathermap.org/data/2.5/weather?lat=#{latitude}&lon=#{longitude}&APPID=#{APPID}&units=imperial")
+   end
+
+   def gps_process_api_data_to_attribs_hash(api_data)
       #May want to separate out this wind direction checker or completely wipe out the wind direction information all together for GPS feature
+      
+      api_info = api_data
       wind_direction_indicator_deg = api_info["wind"]["deg"]
       if wind_direction_indicator_deg.nil?
          wind_direction_indicator_deg = "No Data"
@@ -142,7 +148,7 @@ class WeatherPup::CurrentConditions
       end
       #NOTE: REFACTOR Needed / Bug -- if you do another city I need to localize the time to that location's time zone - especially for sunrise and sunset
 
-      {
+      attributes_hash_for_mass_assignment = {
          :current_weather_description => api_info["weather"][0]["main"],
          :current_conditions_means => "gps",
          :lat => api_info["coord"]["lat"].to_s,
@@ -158,9 +164,9 @@ class WeatherPup::CurrentConditions
       }
    end
 
-   def write_attributes(api_hash)
+   def write_attributes(processed_api_data_hash)
       #this will take whatever the API hash was and create attributes for the object that it's run on.
-      api_hash.map do |key, value|
+      processed_api_data_hash.map do |key, value|
          self.send("#{key}=", value)
       end
    end   
