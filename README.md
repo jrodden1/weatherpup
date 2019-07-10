@@ -24,8 +24,7 @@ After running the `weatherpup` executable from the `bin` folder, you'll be prese
 
 ```
 1. Fetch by Zip Code
-2. Fetch by GPS Coordinates
-(Latitude and Longitude)
+2. Fetch by GPS Coordinates (Latitude and Longitude)
 3. Fetch previously fetched conditions
 ```
 
