@@ -1,8 +1,20 @@
 class WeatherPup::CurrentConditions
    attr_accessor :reading_date_and_time, :current_conditions_means, :zip_code, :lat, :long, 
                  :temperature, :pressure, :humidity, :current_weather_description, :pressure, 
-                 :wind_speed, :wind_direction_indicator, :wind_direction_indicator_string, :reading_date_and_time, :city_name
+                 :wind_speed, :wind_direction_indicator, :wind_direction_indicator_string, :reading_date_and_time, 
+                 :city_name, :when_fetched
    #With this class I should be able to create a CurrentConditions instance by Zip code or GPS coordinates
+
+   @@all = []
+
+   def initialize
+      @@all << self
+   end
+   
+   def self.all
+      @@all
+   end
+   
 
    def zip_api_fetch(zip_code, country_code = "us")
       #this will actually hit the OpenWeatherMap Api
@@ -21,7 +33,7 @@ class WeatherPup::CurrentConditions
       {
          :current_weather_description => api_info["weather"][0]["main"],
          #I'm leaving :current_condtions_means in here in case I want to combine my print_gps and print_zip methods, otherwise, it's not needed at the moment
-         :current_conditions_means => "zip",
+         :current_conditions_means => "Zip Code",
          :temperature => api_info["main"]["temp"].round.to_s,
          :humidity => api_info["main"]["humidity"].to_s,
          :pressure => (api_info["main"]["pressure"] * 0.0295300).to_s[0..4],
@@ -29,7 +41,8 @@ class WeatherPup::CurrentConditions
          :wind_direction_indicator => wind_direction_indicator_deg.to_s + "°",
          :wind_direction_indicator_string => wind_direction_indicator_string,
          :reading_date_and_time => Time.at(api_info["dt"]).to_datetime.strftime("%a, %b %d, %Y at %I:%M%P UTC%:::z"),
-         :city_name => api_info["name"]
+         :city_name => api_info["name"],
+         :when_fetched => Time.now.to_datetime.strftime("%I:%M:%S%P (%b %d)")
       }
    end   
 
@@ -60,7 +73,7 @@ class WeatherPup::CurrentConditions
       {
          :current_weather_description => api_info["weather"][0]["main"],
          #I'm leaving :current_condtions_means in here in case I want to combine my print_gps and print_zip methods, otherwise, it's not needed at the moment
-         :current_conditions_means => "gps",
+         :current_conditions_means => "GPS Coordinates",
          :lat => api_info["coord"]["lat"].to_s,
          :long => api_info["coord"]["lon"].to_s,
          :temperature => api_info["main"]["temp"].round.to_s,
@@ -70,7 +83,8 @@ class WeatherPup::CurrentConditions
          :wind_direction_indicator => wind_direction_indicator_deg,
          :wind_direction_indicator_string => wind_direction_indicator_string,
          :reading_date_and_time => Time.at(api_info["dt"]).to_datetime.strftime("%a, %b %d, %Y at %I:%M%P UTC%:::z"),
-         :city_name => api_info["name"]
+         :city_name => api_info["name"],
+         :when_fetched => Time.now.to_datetime.strftime("%I:%M:%S%P (%b %d)")
       }
    end
 
@@ -81,9 +95,9 @@ class WeatherPup::CurrentConditions
       end
    end   
 
-   def print_zip_current_conditions
+   def print_zip_conditions
       puts <<~CONDITIONS
-         \nThe current weather conditions for #{self.city_name.colorize(:light_yellow).underline} (#{self.zip_code.colorize(:light_yellow)}):  
+         \nThe weather conditions for #{self.city_name.colorize(:green).underline} (#{self.zip_code.colorize(:green)}):  
          
          #{self.temperature.colorize(:light_blue)}°F  
          #{self.humidity.colorize(:light_blue)}% Humidity
@@ -93,17 +107,17 @@ class WeatherPup::CurrentConditions
          Wind Speed: #{self.wind_speed.colorize(:light_blue)} MPH 
          Wind Direction: #{self.wind_direction_indicator_string.colorize(:light_blue)} (#{self.wind_direction_indicator.to_s.colorize(:blue)})
 
-         This data is based on the last weather station reading time of:
-         #{self.reading_date_and_time.colorize(:yellow)}
+         This data is based on the weather station reading time of:
+         #{self.reading_date_and_time.colorize(:green)}
 
          **Weather Data provided by OpenWeatherMap.org**
-         **Zip Code data courtesy of AggData.com**
+            **Zip Code data courtesy of AggData.com**
       CONDITIONS
    end
 
-   def print_gps_current_conditions
+   def print_gps_conditions
       puts <<~CONDITIONS
-         \nThe current weather conditions for #{self.lat.colorize(:light_yellow)}, #{self.long.colorize(:light_yellow)} (#{self.city_name.colorize(:light_yellow)}):  
+         \nThe weather conditions for #{self.lat.colorize(:green)}, #{self.long.colorize(:green)} (#{self.city_name.colorize(:green)}):  
          
          #{self.temperature.colorize(:light_blue)}°F  
          #{self.humidity.colorize(:light_blue)}% Humidity
@@ -113,8 +127,8 @@ class WeatherPup::CurrentConditions
          Wind Speed: #{self.wind_speed.colorize(:light_blue)} MPH 
          Wind Direction: #{self.wind_direction_indicator_string.colorize(:light_blue)} (#{self.wind_direction_indicator.colorize(:light_blue)})
 
-         This data is based on the last weather station reading time of:
-         #{self.reading_date_and_time.colorize(:yellow)}
+         This data is based on the weather station reading time of:
+         #{self.reading_date_and_time.colorize(:green)}
 
          **Weather Data provided by OpenWeatherMap.org**
       CONDITIONS

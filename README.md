@@ -1,8 +1,6 @@
-# Weatherpup
+# WeatherPup
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/weatherpup`. To experiment with that code, run `bin/console` for an interactive prompt.
-
-TODO: Delete this and the text above, and describe your gem
+Welcome to WeatherPup!  WeatherPup is a CLI written in Ruby that fetches current weather information based on a user entered US Zip Code or a GPS Coordinate Pair (Latitude and Longitude)
 
 ## Installation
 
@@ -22,7 +20,30 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+After running the `weatherpup` executable from the `bin` folder, you'll be presented with a few options.
+
+```
+1. Fetch by Zip Code
+2. Fetch by GPS Coordinates
+(Latitude and Longitude)
+3. Fetch previously fetched conditions
+```
+
+Type in `1` to get the current weather conditions by US Zip Code.  After doing this, you'll be asked to type in the 5 digit zip code.  You'll then be shown the current weather for that zip code.  From there you'll have the option to go back to the main menu.
+
+Type in `2` to get the current weather conditions by GPS Coordinates (Latitude and Longitude pair).  After doing this, you'll be asked to type in the latitude in decimal format. 
+
+Example Latitude in decimal format: `40.705204` 
+
+You'll be asked to type in the longitude in decimal format. 
+
+Example Longitude in decimal format: `-74.013845`
+
+You'll then be shown the current weather for that GPS Coordinate pair.  From there you'll have the option to go back to the main menu.
+
+Type in `3` to get a list of the previously fetched weather conditions.  From there you'll have the option to select which previous fetch you would like to view.  Type in the corresponding number then you'll view that historic fetch. 
+
+To exit the program, if you are not already at the main menu, return to the main menu then type in `exit`.
 
 ## Development
 

@@ -4,19 +4,19 @@ class WeatherPup::CLI
       system "clear"
       #puts "Welcome to WeatherPup!"  #simple intro
       puts <<~WELCOME
-            ▒█░░▒█ █▀▀ █░░ █▀▀ █▀▀█ █▀▄▀█ █▀▀ 　 ▀▀█▀▀ █▀▀█    
-            ▒█▒█▒█ █▀▀ █░░ █░░ █░░█ █░▀░█ █▀▀ 　 ░▒█░░ █░░█ 
-            ▒█▄▀▄█ ▀▀▀ ▀▀▀ ▀▀▀ ▀▀▀▀ ▀░░░▀ ▀▀▀ 　 ░▒█░░ ▀▀▀▀
-
-         ▒█░░▒█ █▀▀ █▀▀█ ▀▀█▀▀ █░░█ █▀▀ █▀▀█ ▒█▀▀█ █░░█ █▀▀█ █      
-         ▒█▒█▒█ █▀▀ █▄▄█ ░░█░░ █▀▀█ █▀▀ █▄▄▀ ▒█▄▄█ █░░█ █░░█ ▀      
-         ▒█▄▀▄█ ▀▀▀ ▀░░▀ ░░▀░░ ▀░░▀ ▀▀▀ ▀░▀▀ ▒█░░░ ░▀▀▀ █▀▀▀ ▄  
-
-                        ░░░░░░░░░░░░░░░░▄██
-                        ░░░░▄████▄▄▄▄▄▄███████
-                        ░░▄█▀████████████▀
-                        ░▄▀░██▀██▀▀▀▀▀██▀▀▄
-                        ░░░░█▄░▀█▄░░░░▀█▄▀▀
+      　　　　　 ▒█░░▒█ █▀▀ █░░ █▀▀ █▀▀█ █▀▄▀█ █▀▀ 　 ▀▀█▀▀ █▀▀█    
+      　　　　　 ▒█▒█▒█ █▀▀ █░░ █░░ █░░█ █░▀░█ █▀▀ 　 ░▒█░░ █░░█ 
+      　　　　　 ▒█▄▀▄█ ▀▀▀ ▀▀▀ ▀▀▀ ▀▀▀▀ ▀░░░▀ ▀▀▀ 　 ░▒█░░ ▀▀▀▀
+      
+           　 ▒█░░▒█ █▀▀ █▀▀█ ▀▀█▀▀ █░░█ █▀▀ █▀▀█ ▒█▀▀█ █░░█ █▀▀█ █      
+           　 ▒█▒█▒█ █▀▀ █▄▄█ ░░█░░ █▀▀█ █▀▀ █▄▄▀ ▒█▄▄█ █░░█ █░░█ ▀      
+           　 ▒█▄▀▄█ ▀▀▀ ▀░░▀ ░░▀░░ ▀░░▀ ▀▀▀ ▀░▀▀ ▒█░░░ ░▀▀▀ █▀▀▀ ▄  
+      　
+           　                ░░░░░░░░░░░░░░░░▄██
+           　                ░░░░▄████▄▄▄▄▄▄███████
+           　                ░░▄█▀████████████▀
+           　                ░▄▀░██▀██▀▀▀▀▀██▀▀▄
+           　                ░░░░█▄░▀█▄░░░░▀█▄▀▀
       WELCOME
       main_menu
    end
@@ -26,13 +26,13 @@ class WeatherPup::CLI
       until input.downcase == 'exit'
          puts <<~MAINMENU
 
-            #{"How would you like me to fetch the current weather conditions for you today?".colorize(:magenta)}
+            #{"How would you like me to fetch the current weather conditions for you today?".colorize(:light_red)}
             
-            #{"1. Fetch by Zip Code".colorize(:light_yellow)}
-            #{"2. Fetch by GPS Coordinates".colorize(:light_blue)}
-            #{"(Latitude and Longitude)".colorize(:light_blue)}
-            
-            Please type #{"1".colorize(:light_yellow)}, #{"2".colorize(:light_blue)}, or type #{"exit".colorize(:red)} to quit.
+            #{"1. Fetch by Zip Code".colorize(:green)}
+            #{"2. Fetch by GPS Coordinates (Latitude and Longitude)".colorize(:light_blue)}
+            #{"3. Fetch previously fetched conditions".colorize(:cyan)}
+
+            Please type #{"1".colorize(:green)}, #{"2".colorize(:light_blue)}, #{"3".colorize(:cyan)} or type #{"exit".colorize(:red)} to quit.
          MAINMENU
          input = gets.chomp
 
@@ -41,8 +41,10 @@ class WeatherPup::CLI
             self.fetch_by_zip
          when "2"
             self.fetch_by_gps
+         when "3"
+            self.fetch_previous
          else
-            puts "\nSorry, that isn’t a valid input."
+            puts "\nSorry, that isn’t a valid input.".colorize(:red)
          end
       end
       system "clear"
@@ -58,9 +60,9 @@ class WeatherPup::CLI
       system "clear"
 
       #Ask user for the zip code
-      puts "Ok, Current Weather Conditions by Zip Code!"
+      puts "\nOk, Current Weather Conditions by Zip Code!".colorize(:green)
       until zip_code_valid
-         puts "\nPlease enter in the 5 Digit Zip Code:"
+         puts "\nPlease enter in the 5 Digit Zip Code:".colorize(:green)
          zip_code = gets.chomp
 
          #Checking to see if the user wants out of this loop and back to the main menu
@@ -81,25 +83,31 @@ class WeatherPup::CLI
             api_processed_data_hash = zip_current_conditions.zip_process_api_data_to_attribs_hash(api_raw_data)
             
             #This next line takes the zip_current_conditions variable which is a CurrentConditions Object Instance, taps into it and writes all of the attributes that I collected, then it prints the information located in the object itself.
-            zip_current_conditions.tap {|current_conditions_obj| current_conditions_obj.write_attributes(api_processed_data_hash)}.print_zip_current_conditions
+            zip_current_conditions.tap {|current_conditions_obj| current_conditions_obj.write_attributes(api_processed_data_hash)}.print_zip_conditions
             
             #Next I wait for the user to type in "back" to return to the main menu
-            return_to_main = ""
-            until return_to_main.downcase == "back"
-               puts "\nType 'back' to return to the main menu."
-               return_to_main = gets.chomp
-            end
+            return_to_main_menu_prompt
             system "clear"
             break
          else
             puts <<~INVALID_ZIP
-               \nInvalid Zip code detected!
-               (Type 'back' to return to the main menu).
+               \n#{"Invalid zip code detected!".colorize(:light_red)}
+               
+               (Type #{"back".colorize(:red)} to return to the main menu).
             INVALID_ZIP
          end
       end    
    end
-      
+   
+   def return_to_main_menu_prompt
+      return_to_main = ""
+      until return_to_main.downcase == "back"
+         puts "\nType #{"back".colorize(:red)} to return to the main menu."
+         return_to_main = gets.chomp
+      end
+   end
+
+   
    def zip_code_valid?(zip_to_check)
       #checks the VALID_US_ZIP_CODES constant to see if the zip code is real
       VALID_US_ZIP_CODES.include?(zip_to_check)
@@ -111,11 +119,11 @@ class WeatherPup::CLI
       longitude = nil
       valid_coordinates = nil
       system "clear"
-      puts "Ok, Current Weather Conditions by GPS coordinates!"
+      puts "\nOk, Current Weather Conditions by GPS coordinates!".colorize(:blue)
       
       until valid_coordinates
          #Grab the Lat from the user
-         puts "\nPlease enter in the " + "latitude".colorize(:light_yellow).underline + " in decimal notation:"
+         puts "\nPlease enter in the ".colorize(:blue) + "latitude".colorize(:green).underline + " in decimal notation:".colorize(:blue)
          latitude = gets.chomp
          
          #Checking to see if the user wants out of this loop and back to the main menu
@@ -125,7 +133,7 @@ class WeatherPup::CLI
          end
 
          #Grab the Long from the user
-         puts "\nPlease enter in the " + "longitude".colorize(:light_blue).underline + " in decimal notation:"
+         puts "\nPlease enter in the ".colorize(:blue) + "longitude".colorize(:magenta).underline + " in decimal notation:".colorize(:blue)
          longitude = gets.chomp
          #Checking to see if the user wants out of this loop and back to the main menu
          if longitude.downcase == "back"
@@ -136,26 +144,23 @@ class WeatherPup::CLI
          #Checking to see if the coordinates are valid using class method #valid_coordinate_pair?
          valid_coordinates = self.valid_coordinate_pair?(latitude, longitude)
          
-         # If the coordinates are valid, then then instantiate a new instance of Current Conditions Object, hit the weather conditions api, write the object's attributes using mass assignment (#write_attributes), then #print_gps_current_conditions to screen
+         # If the coordinates are valid, then then instantiate a new instance of Current Conditions Object, hit the weather conditions api, write the object's attributes using mass assignment (#write_attributes), then #print_gps_conditions to screen
          if valid_coordinates
             system "clear" 
             gps_current_conditions = WeatherPup::CurrentConditions.new
             api_raw_data = gps_current_conditions.gps_api_fetch(latitude, longitude)
             api_processed_data_hash = gps_current_conditions.gps_process_api_data_to_attribs_hash(api_raw_data)
             #This next line takes the gps_current_conditions variable which is a CurrentConditions Object Instance, taps into it and writes all of the attributes that I collected, then it prints the information located in the object itself.
-            gps_current_conditions.tap {|current_conditions_obj| current_conditions_obj.write_attributes(api_processed_data_hash)}.print_gps_current_conditions
+            gps_current_conditions.tap {|current_conditions_obj| current_conditions_obj.write_attributes(api_processed_data_hash)}.print_gps_conditions
             
-            return_to_main = ""
-            until return_to_main.downcase == "back"
-               puts "\nType 'back' to return to the main menu."
-               return_to_main = gets.chomp
-            end
+            return_to_main_menu_prompt
             system "clear"
             break
          else
             puts <<~INVALID_GPS
-               \nInvalid Coordinates detected!
-               (Type 'back' to return to the main menu).
+               \n#{"Invalid coordinates detected!".colorize(:light_red)} 
+               
+               (Type #{"back".colorize(:red)} to return to the main menu).
             INVALID_GPS
          end
       end
@@ -173,6 +178,69 @@ class WeatherPup::CLI
       #returns true if the lat and long coordinate pair is valid.
    end
 
+   def fetch_previous
+      system "clear"
+      if WeatherPup::CurrentConditions.all == []
+         system "clear"
+         puts "\nThere are no previous fetches to display!".colorize(:cyan)
+         return_to_main_menu_prompt
+         system "clear"
+      else
+         #puts a blank line to give some headroom when displaying
+         puts "\n"
+         #Can possibly abstract this next section into a method called "list_all_previous" to make the #fetch_previous method a bit less cumbersome to read
+         WeatherPup::CurrentConditions.all.each.with_index(1) do |cc_obj, index|
+            case cc_obj.current_conditions_means
+            when "Zip Code"
+               puts "#{index}. Weather by Zip Code: #{cc_obj.zip_code.colorize(:green)} (#{cc_obj.city_name.colorize(:green)}) fetched at #{cc_obj.when_fetched.colorize(:red)}"
+            when "GPS Coordinates"
+               puts "#{index}. Weather by GPS: #{cc_obj.lat.colorize(:light_blue)}, #{cc_obj.long.colorize(:light_blue)} (#{cc_obj.city_name.colorize(:light_blue)}) fetched at #{cc_obj.when_fetched.colorize(:red)}"
+            end
+         end 
+
+         valid_input_range = 1..WeatherPup::CurrentConditions.all.length
+         valid_input = nil
+         
+         until valid_input
+            puts <<~USER_PROMPT
+               \nPlease type in the #{"number".colorize(:cyan)} of the previous fetch you would like to view
+               or type #{"back".colorize(:red)} to return to the main menu.
+            USER_PROMPT
+            user_selection = gets.chomp
+
+            if user_selection.downcase == "back"
+               system "clear"
+               break
+            end
+
+            user_integer = user_selection.to_i
+            valid_input = valid_input_range.member?(user_integer)
+
+            if valid_input 
+               selected_cc_obj = WeatherPup::CurrentConditions.all[user_integer - 1]
+               type = selected_cc_obj.current_conditions_means
+
+               case type 
+               when "Zip Code"
+                  system "clear"
+                  selected_cc_obj.print_zip_conditions
+                  return_to_main_menu_prompt
+                  system "clear"
+                  break
+               when "GPS Coordinates"
+                  system "clear"
+                  selected_cc_obj.print_gps_conditions
+                  return_to_main_menu_prompt
+                  system "clear"
+                  break
+               end
+            else
+               puts "\n#{"Invalid selection.".colorize(:light_red)} Please try again or type #{"back".colorize(:red)} to return to the main menu."
+            end
+         end
+      end
+   end
+   
    #Says thank you and goodbye to user. 
    def goodbye
       system "clear"
@@ -181,9 +249,9 @@ class WeatherPup::CLI
            　  　 　    ░▒█░░ █▀▀█ █▄▄█ █░░█ █▀▄ ▀▀█ 　 █▀▀ █░░█ █▄▄▀ 
            　  　 　    ░▒█░░ ▀░░▀ ▀░░▀ ▀░░▀ ▀░▀ ▀▀▀ 　 ▀░░ ▀▀▀▀ ▀░▀▀       
            
-                █▀▀█ █░░ █▀▀█ █░░█ ░▀░ █▀▀▄ █▀▀▀ 　 █▀▀ █▀▀ ▀▀█▀▀ █▀▀ █░░█ 
-                █░░█ █░░ █▄▄█ █▄▄█ ▀█▀ █░░█ █░▀█ 　 █▀▀ █▀▀ ░░█░░ █░░ █▀▀█ 
-                █▀▀▀ ▀▀▀ ▀░░▀ ▄▄▄█ ▀▀▀ ▀░░▀ ▀▀▀▀ 　 ▀░░ ▀▀▀ ░░▀░░ ▀▀▀ ▀░░▀ 
+           　　　█▀▀█ █░░ █▀▀█ █░░█ ░▀░ █▀▀▄ █▀▀▀ 　 █▀▀ █▀▀ ▀▀█▀▀ █▀▀ █░░█ 
+           　　　█░░█ █░░ █▄▄█ █▄▄█ ▀█▀ █░░█ █░▀█ 　 █▀▀ █▀▀ ░░█░░ █░░ █▀▀█ 
+           　　　█▀▀▀ ▀▀▀ ▀░░▀ ▄▄▄█ ▀▀▀ ▀░░▀ ▀▀▀▀ 　 ▀░░ ▀▀▀ ░░▀░░ ▀▀▀ ▀░░▀ 
 
            　  　 　 　 　   █░░░█ ░▀░ ▀▀█▀▀ █░░█ 　 █▀▄▀█ █▀▀ █            
            　  　 　 　 　   █▄█▄█ ▀█▀ ░░█░░ █▀▀█ 　 █░▀░█ █▀▀ ▀ 
