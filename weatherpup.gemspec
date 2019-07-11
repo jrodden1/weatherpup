@@ -6,7 +6,6 @@ Gem::Specification.new do |spec|
   spec.name          = "weatherpup"
   spec.version       = WeatherPup::VERSION
   spec.authors       = ["Jeremiah Rodden"]
-  spec.email         = ["jrodden1+dev@gmail.com"]
 
   spec.summary       = %q{WeatherPup is a CLI application built with Ruby that will fetch current weather condtions based on a US Zip Code or a GPS Coordinate pair.}
   spec.description   = %q{WeatherPup is a CLI application built with Ruby that will fetch current weather condtions based on a US Zip Code or a GPS Coordinate pair.  This utilizes data from AggData.org and OpenWeatherMap.org}
@@ -31,7 +30,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency "bundler", "~> 2.0"
   spec.add_development_dependency "rake", "~> 10.0"
   spec.add_development_dependency "rspec", "~> 3.0"
-  spec.add_development_dependency "pry"
-  spec.add_runtime_dependency "httparty"
-  spec.add_runtime_dependency "colorize"
+  spec.add_development_dependency "pry", "~> 0.12"
+  spec.add_runtime_dependency "httparty", "~> 0.17"
+  spec.add_runtime_dependency "colorize", "~> 0.8"
 end

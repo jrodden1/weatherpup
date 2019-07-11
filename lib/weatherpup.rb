@@ -1,4 +1,4 @@
-#need to create an environment file to clean this up later??
+#This is acting as my environment file. 
 require_relative "./weatherpup/version"
 require_relative "./weatherpup/cli"
 require_relative "./weatherpup/weather_conditions"
