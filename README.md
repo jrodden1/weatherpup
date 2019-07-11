@@ -28,19 +28,15 @@ After running the `weatherpup` executable from the `bin` folder, you'll be prese
 3. Fetch previously fetched conditions
 ```
 
-Type in `1` to get the current weather conditions by US Zip Code.  After doing this, you'll be asked to type in the 5 digit zip code.  You'll then be shown the current weather for that zip code.  From there you'll have the option to go back to the main menu.
+Type in `1` to get the current weather conditions by US Zip Code.  After doing this, you'll be asked to type in the 5 digit zip code.  You'll then be shown the current weather for that zip code.  From there you'll have the option to go `back` to the main menu.
 
-Type in `2` to get the current weather conditions by GPS Coordinates (Latitude and Longitude pair).  After doing this, you'll be asked to type in the latitude in decimal format. 
+Type in `2` to get the current weather conditions by GPS Coordinates (Latitude and Longitude pair).  After doing this, you'll be asked to type in the latitude in decimal format. Example Latitude in decimal format: `40.705204` 
 
-Example Latitude in decimal format: `40.705204` 
+You'll then be asked to type in the longitude in decimal format. Example Longitude in decimal format: `-74.013845`
 
-You'll be asked to type in the longitude in decimal format. 
+Then you'll be shown the current weather for that GPS Coordinate pair.  From there you'll have the option to go `back` to the main menu.
 
-Example Longitude in decimal format: `-74.013845`
-
-You'll then be shown the current weather for that GPS Coordinate pair.  From there you'll have the option to go back to the main menu.
-
-Type in `3` to get a list of the previously fetched weather conditions.  From there you'll have the option to select which previous fetch you would like to view.  Type in the corresponding number then you'll view that historic fetch. 
+Type in `3` to get a list of the previously fetched weather conditions.  From there you'll have the option to select which previous fetch you would like to view.  Type in the corresponding number then you'll view that historic fetch.  From there you'll have the option to go `back` to the main menu.
 
 To exit the program, if you are not already at the main menu, return to the main menu then type in `exit`.
 

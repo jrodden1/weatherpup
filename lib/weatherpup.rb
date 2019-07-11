@@ -1,7 +1,7 @@
 #need to create an environment file to clean this up later??
 require_relative "./weatherpup/version"
 require_relative "./weatherpup/cli"
-require_relative "./weatherpup/current_conditions"
+require_relative "./weatherpup/weather_conditions"
 
 require 'httparty'
 require 'colorize'

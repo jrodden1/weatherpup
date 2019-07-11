@@ -1,9 +1,9 @@
-class WeatherPup::CurrentConditions
+class WeatherPup::WeatherConditions
    attr_accessor :reading_date_and_time, :current_conditions_means, :zip_code, :lat, :long, 
                  :temperature, :pressure, :humidity, :current_weather_description, :pressure, 
                  :wind_speed, :wind_direction_indicator, :wind_direction_indicator_string, :reading_date_and_time, 
                  :city_name, :when_fetched
-   #With this class I should be able to create a CurrentConditions instance by Zip code or GPS coordinates
+   #With this class I should be able to create a WeatherConditions instance by Zip code or GPS coordinates
 
    @@all = []
 
@@ -14,7 +14,6 @@ class WeatherPup::CurrentConditions
    def self.all
       @@all
    end
-   
 
    def zip_api_fetch(zip_code, country_code = "us")
       #this will actually hit the OpenWeatherMap Api
@@ -156,5 +155,4 @@ class WeatherPup::CurrentConditions
       end
       indicator
    end 
-  
 end

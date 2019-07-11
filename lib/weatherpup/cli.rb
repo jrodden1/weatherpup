@@ -34,7 +34,7 @@ class WeatherPup::CLI
 
             Please type #{"1".colorize(:green)}, #{"2".colorize(:light_blue)}, #{"3".colorize(:cyan)} or type #{"exit".colorize(:red)} to quit.
          MAINMENU
-         input = gets.chomp
+         input = gets.chomp.downcase
 
          case input
          when "1"
@@ -43,6 +43,8 @@ class WeatherPup::CLI
             self.fetch_by_gps
          when "3"
             self.fetch_previous
+         when "exit"
+            break
          else
             puts "\nSorry, that isn’t a valid input.".colorize(:red)
          end
@@ -53,7 +55,8 @@ class WeatherPup::CLI
 
    #fetch the current conditions via zip code input from the user
    def fetch_by_zip
-      zip_code = nil
+      #may not need zip_code variable declaration here) 
+      #zip_code = nil
       zip_code_valid = nil
       
       #Clear my screen first to make things look nicer 
@@ -74,16 +77,16 @@ class WeatherPup::CLI
          #Otherwise, check to see if what the user put in was valid
          zip_code_valid = zip_code_valid?(zip_code)
 
-         #If the zipcode input is valid, clear the screen, instantiate a new instance of CurrentConditions class, go fetch the raw api data, process it into an attributes hash to mass assign, mass assign the attributes of the CurrentCondtions intance using #write_attributes, then print the current conditions to screen gps
+         #If the zipcode input is valid, clear the screen, instantiate a new instance of WeatherConditions class, go fetch the raw api data, process it into an attributes hash to mass assign, mass assign the attributes of the WeatherConditions intance using #write_attributes, then print the current conditions to screen gps
          if zip_code_valid
             system "clear" 
-            zip_current_conditions = WeatherPup::CurrentConditions.new
-            zip_current_conditions.zip_code = zip_code
-            api_raw_data = zip_current_conditions.zip_api_fetch(zip_code)
-            api_processed_data_hash = zip_current_conditions.zip_process_api_data_to_attribs_hash(api_raw_data)
+            zip_weather_conditions = WeatherPup::WeatherConditions.new
+            zip_weather_conditions.zip_code = zip_code
+            api_raw_data = zip_weather_conditions.zip_api_fetch(zip_code)
+            api_processed_data_hash = zip_weather_conditions.zip_process_api_data_to_attribs_hash(api_raw_data)
             
-            #This next line takes the zip_current_conditions variable which is a CurrentConditions Object Instance, taps into it and writes all of the attributes that I collected, then it prints the information located in the object itself.
-            zip_current_conditions.tap {|current_conditions_obj| current_conditions_obj.write_attributes(api_processed_data_hash)}.print_zip_conditions
+            #This next line takes the zip_weather_conditions variable which is a WeatherConditions Object Instance, taps into it and writes all of the attributes that I collected, then it prints the information located in the object itself.
+            zip_weather_conditions.tap {|weather_conditions_obj| weather_conditions_obj.write_attributes(api_processed_data_hash)}.print_zip_conditions
             
             #Next I wait for the user to type in "back" to return to the main menu
             return_to_main_menu_prompt
@@ -144,14 +147,14 @@ class WeatherPup::CLI
          #Checking to see if the coordinates are valid using class method #valid_coordinate_pair?
          valid_coordinates = self.valid_coordinate_pair?(latitude, longitude)
          
-         # If the coordinates are valid, then then instantiate a new instance of Current Conditions Object, hit the weather conditions api, write the object's attributes using mass assignment (#write_attributes), then #print_gps_conditions to screen
+         # If the coordinates are valid, then then instantiate a new instance of WeatherConditions Object, hit the weather conditions api, write the object's attributes using mass assignment (#write_attributes), then #print_gps_conditions to screen
          if valid_coordinates
             system "clear" 
-            gps_current_conditions = WeatherPup::CurrentConditions.new
-            api_raw_data = gps_current_conditions.gps_api_fetch(latitude, longitude)
-            api_processed_data_hash = gps_current_conditions.gps_process_api_data_to_attribs_hash(api_raw_data)
-            #This next line takes the gps_current_conditions variable which is a CurrentConditions Object Instance, taps into it and writes all of the attributes that I collected, then it prints the information located in the object itself.
-            gps_current_conditions.tap {|current_conditions_obj| current_conditions_obj.write_attributes(api_processed_data_hash)}.print_gps_conditions
+            gps_weather_conditions = WeatherPup::WeatherConditions.new
+            api_raw_data = gps_weather_conditions.gps_api_fetch(latitude, longitude)
+            api_processed_data_hash = gps_weather_conditions.gps_process_api_data_to_attribs_hash(api_raw_data)
+            #This next line takes the gps_weather_conditions variable which is a WeatherConditions Object Instance, taps into it and writes all of the attributes that I collected, then it prints the information located in the object itself.
+            gps_weather_conditions.tap {|weather_conditions_obj| weather_conditions_obj.write_attributes(api_processed_data_hash)}.print_gps_conditions
             
             return_to_main_menu_prompt
             system "clear"
@@ -180,7 +183,7 @@ class WeatherPup::CLI
 
    def fetch_previous
       system "clear"
-      if WeatherPup::CurrentConditions.all == []
+      if WeatherPup::WeatherConditions.all == []
          system "clear"
          puts "\nThere are no previous fetches to display!".colorize(:cyan)
          return_to_main_menu_prompt
@@ -189,16 +192,16 @@ class WeatherPup::CLI
          #puts a blank line to give some headroom when displaying
          puts "\n"
          #Can possibly abstract this next section into a method called "list_all_previous" to make the #fetch_previous method a bit less cumbersome to read
-         WeatherPup::CurrentConditions.all.each.with_index(1) do |cc_obj, index|
-            case cc_obj.current_conditions_means
+         WeatherPup::WeatherConditions.all.each.with_index(1) do |wc_obj, index|
+            case wc_obj.current_conditions_means
             when "Zip Code"
-               puts "#{index}. Weather by Zip Code: #{cc_obj.zip_code.colorize(:green)} (#{cc_obj.city_name.colorize(:green)}) fetched at #{cc_obj.when_fetched.colorize(:red)}"
+               puts "#{index}. Weather by Zip Code: #{wc_obj.zip_code.colorize(:green)} (#{wc_obj.city_name.colorize(:green)}) fetched at #{wc_obj.when_fetched.colorize(:red)}"
             when "GPS Coordinates"
-               puts "#{index}. Weather by GPS: #{cc_obj.lat.colorize(:light_blue)}, #{cc_obj.long.colorize(:light_blue)} (#{cc_obj.city_name.colorize(:light_blue)}) fetched at #{cc_obj.when_fetched.colorize(:red)}"
+               puts "#{index}. Weather by GPS: #{wc_obj.lat.colorize(:light_blue)}, #{wc_obj.long.colorize(:light_blue)} (#{wc_obj.city_name.colorize(:light_blue)}) fetched at #{wc_obj.when_fetched.colorize(:red)}"
             end
          end 
 
-         valid_input_range = 1..WeatherPup::CurrentConditions.all.length
+         valid_input_range = 1..WeatherPup::WeatherConditions.all.length
          valid_input = nil
          
          until valid_input
@@ -217,19 +220,19 @@ class WeatherPup::CLI
             valid_input = valid_input_range.member?(user_integer)
 
             if valid_input 
-               selected_cc_obj = WeatherPup::CurrentConditions.all[user_integer - 1]
-               type = selected_cc_obj.current_conditions_means
+               selected_wc_obj = WeatherPup::WeatherConditions.all[user_integer - 1]
+               type = selected_wc_obj.current_conditions_means
 
                case type 
                when "Zip Code"
                   system "clear"
-                  selected_cc_obj.print_zip_conditions
+                  selected_wc_obj.print_zip_conditions
                   return_to_main_menu_prompt
                   system "clear"
                   break
                when "GPS Coordinates"
                   system "clear"
-                  selected_cc_obj.print_gps_conditions
+                  selected_wc_obj.print_gps_conditions
                   return_to_main_menu_prompt
                   system "clear"
                   break
