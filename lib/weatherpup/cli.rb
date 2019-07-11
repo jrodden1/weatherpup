@@ -122,11 +122,11 @@ class WeatherPup::CLI
       longitude = nil
       valid_coordinates = nil
       system "clear"
-      puts "\nOk, Current Weather Conditions by GPS coordinates!".colorize(:blue)
+      puts "\nOk, Current Weather Conditions by GPS coordinates!".colorize(:light_blue)
       
       until valid_coordinates
          #Grab the Lat from the user
-         puts "\nPlease enter in the ".colorize(:blue) + "latitude".colorize(:green).underline + " in decimal notation:".colorize(:blue)
+         puts "\nPlease enter in the ".colorize(:light_blue) + "latitude".colorize(:green).underline + " in decimal notation:".colorize(:light_blue)
          latitude = gets.chomp
          
          #Checking to see if the user wants out of this loop and back to the main menu
@@ -136,7 +136,7 @@ class WeatherPup::CLI
          end
 
          #Grab the Long from the user
-         puts "\nPlease enter in the ".colorize(:blue) + "longitude".colorize(:magenta).underline + " in decimal notation:".colorize(:blue)
+         puts "\nPlease enter in the ".colorize(:light_blue) + "longitude".colorize(:magenta).underline + " in decimal notation:".colorize(:light_blue)
          longitude = gets.chomp
          #Checking to see if the user wants out of this loop and back to the main menu
          if longitude.downcase == "back"
