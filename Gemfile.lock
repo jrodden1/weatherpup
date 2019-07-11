@@ -1,9 +1,9 @@
 PATH
   remote: .
   specs:
-    weatherpup (0.1.0)
-      colorize
-      httparty
+    weatherpup (0.1.1)
+      colorize (~> 0.8)
+      httparty (~> 0.17)
 
 GEM
   remote: https://rubygems.org/
@@ -42,7 +42,7 @@ PLATFORMS
 
 DEPENDENCIES
   bundler (~> 2.0)
-  pry
+  pry (~> 0.12)
   rake (~> 10.0)
   rspec (~> 3.0)
   weatherpup!
