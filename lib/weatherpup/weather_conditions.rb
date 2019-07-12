@@ -3,32 +3,35 @@ class WeatherPup::WeatherConditions
                  :temperature, :pressure, :humidity, :current_weather_description, :pressure, 
                  :wind_speed, :wind_direction_indicator, :wind_direction_indicator_string, :reading_date_and_time, 
                  :city_name, :when_fetched
-   #With this class I should be able to create a WeatherConditions instance by Zip code or GPS coordinates
+   #With this class I should be able to create a WeatherConditions instance by Zip code or GPS coordinates.  Also I should be able to list out all the previous WeatherConditions instances that I have.
 
+   #WeatherConditions instance tracker array class variable
    @@all = []
 
+   #Adds the current WeatherConditions instance to the @@all instance tracker
    def initialize
       @@all << self
    end
    
+   #Class method used to read the all the instances of WeatherConditions in existence.
    def self.all
       @@all
    end
 
+   #Go actually hit the OpenWeatherMap Api and then return all the information 
    def zip_api_fetch(zip_code, country_code = "us")
       #this will actually hit the OpenWeatherMap Api
       #I have defaulted the country code to US for now, but have built the GET request to be flexible to add multi-country postal codes later
       HTTParty.get("https://api.openweathermap.org/data/2.5/weather?zip=#{zip_code},#{country_code}&APPID=#{APPID}&units=imperial")
    end
 
-   def zip_process_api_data_to_attribs_hash(api_data)
-      #May want to separate out this wind direction checker or completely wipe out the wind direction information all together for GPS feature
-      #REFACTOR: take out the line below and rename the arg to api_info
-      api_info = api_data
+   #Process the raw API data that was grabbed by #zip_api_fetch and and output a hash that will be used by #write_attributes to mass assign WeatherConditions instance attributes
+   def zip_process_api_data_to_attribs_hash(api_info)
+      #massage the wind_direction information before writing it to the attributes hash.
       wind_direction_indicator_deg = api_info["wind"]["deg"].round
       wind_direction_indicator_string = wind_direction_indicator_to_text(wind_direction_indicator_deg)
 
-      #creates attributes_hash_for_mass_assignment to be used by the #write_attributes method
+      #creates attributes hash for mass assignment to be used by the #write_attributes method
       {
          :current_weather_description => api_info["weather"][0]["main"],
          #I'm leaving :current_condtions_means in here in case I want to combine my print_gps and print_zip methods, otherwise, it's not needed at the moment
@@ -45,18 +48,16 @@ class WeatherPup::WeatherConditions
       }
    end   
 
+   #Go actually hit the OpenWeatherMap Api and then return all the information 
    def gps_api_fetch(latitude, longitude)
       
-      #I think I want to split this out into two methods -- #gps_api_data_fetch which will just do the fetch based on the Lat, Longs given to it.  Then have another method, #create_api_data_hash that will do the rest of this in another method.  The #create_api_data_hash method will need to be run in the #new_by_gps method and the create_api_data_hash method will call the #gps_apa_data_fetch method and save that into a variable called api_info 
-
-      #this will actually hit the OpenWeatherMap Api and then return all the information 
       HTTParty.get("https://api.openweathermap.org/data/2.5/weather?lat=#{latitude}&lon=#{longitude}&APPID=#{APPID}&units=imperial")
    end
 
-   def gps_process_api_data_to_attribs_hash(api_data)
-      #May want to separate out this wind direction checker or completely wipe out the wind direction information all together for GPS feature
-      
-      api_info = api_data
+   #Process the raw API data that was grabbed by #gps_api_fetch and and output a hash that will be used by #write_attributes to mass assign WeatherConditions instance attributes
+   def gps_process_api_data_to_attribs_hash(api_info)
+      #the data from the API for Wind direction for a GPS check is not as reliable and sometimes is missing.
+      #Check to see if the data is there first, then write it out the variables used in the hash
       wind_direction_indicator_deg = api_info["wind"]["deg"]
       if wind_direction_indicator_deg.nil?
          wind_direction_indicator_deg = "No Data"
@@ -66,9 +67,8 @@ class WeatherPup::WeatherConditions
          wind_direction_indicator_string = wind_direction_indicator_to_text(wind_direction_indicator_deg_rounded)
          wind_direction_indicator_deg = wind_direction_indicator_deg.round.to_s + "°"
       end
-      #NOTE: REFACTOR Needed / Bug -- if you do another city I need to localize the time to that location's time zone - especially for sunrise and sunset
 
-      #creates attributes_hash_for_mass_assignment to be used by the #write_attributes method
+      #creates attributes hash for mass assignment to be used by the #write_attributes method
       {
          :current_weather_description => api_info["weather"][0]["main"],
          #I'm leaving :current_condtions_means in here in case I want to combine my print_gps and print_zip methods, otherwise, it's not needed at the moment
@@ -87,13 +87,14 @@ class WeatherPup::WeatherConditions
       }
    end
 
+   #Writes attributes using mass assignment to the WeatherConditions object it is called on when given a processed api hash as an arg.
    def write_attributes(processed_api_data_hash)
-      #this will take whatever the API hash was and create attributes for the object that it's run on.
       processed_api_data_hash.map do |key, value|
          self.send("#{key}=", value)
       end
    end   
 
+   #Prints Zip Conditions to screen from a WeatherConditions Object. 
    def print_zip_conditions
       puts <<~CONDITIONS
          \nThe weather conditions for #{self.city_name.colorize(:green).underline} (#{self.zip_code.colorize(:green)}):  
@@ -114,6 +115,7 @@ class WeatherPup::WeatherConditions
       CONDITIONS
    end
 
+   #Prints GPS conditions to screen from a WeatherConditions object. 
    def print_gps_conditions
       puts <<~CONDITIONS
          \nThe weather conditions for #{self.lat.colorize(:green)}, #{self.long.colorize(:green)} (#{self.city_name.colorize(:green)}):  
@@ -132,9 +134,9 @@ class WeatherPup::WeatherConditions
          **Weather Data provided by OpenWeatherMap.org**
       CONDITIONS
    end
-      
+   
+   #This method figures out what the direction indicator text should when given a numeric wind direction in degrees
    def wind_direction_indicator_to_text(wind_direction_in_degrees)
-      #This code may be a little smelly.  I may be able to do this by iterating over a hash of the constants and check wind_direction_in_degrees agains the value of each then return the key.  Meh... not sure. 
       indicator = nil
       if NORTH_RANGE_PART1.member?(wind_direction_in_degrees) || NORTH_RANGE_PART2.member?(wind_direction_in_degrees)
          indicator = "N"
@@ -155,4 +157,16 @@ class WeatherPup::WeatherConditions
       end
       indicator
    end 
+
+   #This method prints a list out all the instances of WeatherConditions to screen
+   def self.list_all_previous
+      self.all.each.with_index(1) do |wc_obj, index|
+         case wc_obj.current_conditions_means
+         when "Zip Code"
+            puts "#{index}. Weather by Zip Code: #{wc_obj.zip_code.colorize(:green)} (#{wc_obj.city_name.colorize(:green)}) fetched at #{wc_obj.when_fetched.colorize(:red)}"
+         when "GPS Coordinates"
+            puts "#{index}. Weather by GPS: #{wc_obj.lat.colorize(:light_blue)}, #{wc_obj.long.colorize(:light_blue)} (#{wc_obj.city_name.colorize(:light_blue)}) fetched at #{wc_obj.when_fetched.colorize(:red)}"
+         end
+      end
+   end
 end

@@ -1,4 +1,4 @@
-#This is acting as my environment file. 
+#This is acting as my environment file.  Leaving it called "weatherpup.rb" per rubygem standards. 
 require_relative "./weatherpup/version"
 require_relative "./weatherpup/cli"
 require_relative "./weatherpup/weather_conditions"
@@ -6,9 +6,10 @@ require_relative "./weatherpup/weather_conditions"
 require 'httparty'
 require 'colorize'
 require 'yaml'
-require 'pry'
 
+#Read in a YAML file that contains all the valid US zip codes -- provided by www.aggdata.com
 VALID_US_ZIP_CODES = YAML.load(File.read("./lib/weatherpup/valid_us_zip_codes.yml"))
+
 APPID = "e4ece4d3cbcfdd05d69889c6753d57da"
 
 #These are the ranges that will allow me to figure out the direction indicator is when I get back information from the weather API for the wind direction in degrees

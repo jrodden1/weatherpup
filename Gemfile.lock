@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    weatherpup (0.1.2)
+    weatherpup (0.1.3)
       colorize (~> 0.8)
       httparty (~> 0.17)
 

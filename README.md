@@ -1,6 +1,6 @@
 # WeatherPup
 
-Welcome to WeatherPup!  WeatherPup is a CLI written in Ruby that fetches current weather information based on a user entered US Zip Code or a GPS Coordinate Pair (Latitude and Longitude)
+Welcome to WeatherPup!  WeatherPup is a CLI written in Ruby that fetches current weather information based on a user entered US Zip Code or a GPS Coordinate Pair (Latitude and Longitude).  Previously fetched weather conditions can also be viewed.
 
 ## Installation
 
@@ -30,9 +30,9 @@ After running the `weatherpup` executable from the `bin` folder, you'll be prese
 
 Type in `1` to get the current weather conditions by US Zip Code.  After doing this, you'll be asked to type in the 5 digit zip code.  You'll then be shown the current weather for that zip code.  From there you'll have the option to go `back` to the main menu.
 
-Type in `2` to get the current weather conditions by GPS Coordinates (Latitude and Longitude pair).  After doing this, you'll be asked to type in the latitude in decimal format. Example Latitude in decimal format: `40.705204` 
+Type in `2` to get the current weather conditions by GPS Coordinates (Latitude and Longitude pair).  After doing this, you'll be asked to type in the _latitude_ in decimal format. Example Latitude in decimal format: `40.705204` 
 
-You'll then be asked to type in the longitude in decimal format. Example Longitude in decimal format: `-74.013845`
+You'll then be asked to type in the _longitude_ in decimal format. Example Longitude in decimal format: `-74.013845`
 
 Then you'll be shown the current weather for that GPS Coordinate pair.  From there you'll have the option to go `back` to the main menu.
 
