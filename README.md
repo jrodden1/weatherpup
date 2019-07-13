@@ -20,7 +20,7 @@ Or install it yourself as:
 
 ## Usage
 
-After running the `weatherpup` executable from the `bin` folder, you'll be presented with a few options.
+After running the `weatherpup` executable from the `bin` folder, you'll be presented with a few options.  (If you used `require 'weatherpup'`, in your program / console call `WeatherPup::CLI.new.call` to instantiate a new instance of the WeatherPup CLI.)
 
 ```
 1. Fetch by Zip Code
