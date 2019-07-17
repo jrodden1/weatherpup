@@ -161,6 +161,11 @@ class WeatherPup::WeatherConditions
    #This method prints a list out all the instances of WeatherConditions to screen
    def self.list_all_previous
       self.all.each.with_index(1) do |wc_obj, index|
+         #A way to accomplish this if only have Zip Code and GPS Features (and no additional ones)
+         #zip_or_gps = wc_obj.current_conditions_means == "Zip Code" ? wc_obj.zip_code.colorize(:green) : "#{wc_obj.lat.colorize(:light_blue)}, #{wc_obj.long.colorize(:light_blue)}"
+         #puts "#{index}. Weather by #{wc_obj.current_conditions_means}: #{zip_or_gps} (#{wc_obj.city_name.colorize(:green)}) fetched at #{wc_obj.when_fetched.colorize(:red)}"
+         
+         #extensible if further features added.
          case wc_obj.current_conditions_means
          when "Zip Code"
             puts "#{index}. Weather by Zip Code: #{wc_obj.zip_code.colorize(:green)} (#{wc_obj.city_name.colorize(:green)}) fetched at #{wc_obj.when_fetched.colorize(:red)}"
